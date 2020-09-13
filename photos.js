@@ -75,10 +75,10 @@ jQuery(document).ready(function() {
 		var elem = event.target;
 		let comments_count = 0;
 		let star_count = 0;
-		GraphJS.getStar(elem, response => {
+		GraphJS.getStar(elem.href, response => {
 		  star_count = response.count;
 		});
-		GraphJS.getComments(elem, response => {
+		GraphJS.getComments(elem.href, response => {
 		  comments_count = response.comments.length;
 		});
 		
@@ -92,17 +92,20 @@ jQuery(document).ready(function() {
 		div.style.width = "100%";
 		//div.style.height = "100%";
 		//div.style.backgroundSize = "cover";
-		div.innerHTML += '<div style="position: absolute; width: 100%; bottom: 50%; color: white; font-weight: 300; font-size: 18px;"><span id="star" style="z-index: 9; cursor: pointer;"><i class="fa fa-heart"></i>&nbsp;&nbsp;'+star_count+'</span>&nbsp;&nbsp;&nbsp;&nbsp;<span id="comment" style="z-index: 9; cursor: pointer;"><i class="fa fa-comment"></i>&nbsp;&nbsp;'+comments_count+'</span></div>';
-		this.prepend(div);
 		
-		var commentIcon = document.getElementById("comment");
-		commentIcon.addEventListener("click", comments);
-		var starIcon = document.getElementById("star");
-		starIcon.addEventListener("click", stars);
+		window.setTimeout(()=>{
+			div.innerHTML += '<div style="position: absolute; width: 100%; bottom: 50%; color: white; font-weight: 300; font-size: 18px;"><span id="star" style="z-index: 9; cursor: pointer;"><i class="fa fa-heart"></i>&nbsp;&nbsp;'+star_count+'</span>&nbsp;&nbsp;&nbsp;&nbsp;<span id="comment" style="z-index: 9; cursor: pointer;"><i class="fa fa-comment"></i>&nbsp;&nbsp;'+comments_count+'</span></div>';
+			this.prepend(div);
+
+			var commentIcon = document.getElementById("comment");
+			commentIcon.addEventListener("click", comments);
+			var starIcon = document.getElementById("star");
+			starIcon.addEventListener("click", stars);
+		}, 500);
 		
 		function comments() {
 			GraphJS.addComment(
-				elem,
+				elem.href,
 				"This is a test comment.",
 				function(response) {
 					if(response.success) {
@@ -120,7 +123,7 @@ jQuery(document).ready(function() {
 
 		function stars() {
 			GraphJS.star(
-				elem,
+				elem.href,
 				function(response) {
 					if(response.success) {
 						

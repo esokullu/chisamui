@@ -70,21 +70,83 @@ PhotosIframe.onload = function(){
 }
 
 jQuery(document).ready(function() {
+
+	// PhotoSwipe TopBar elements
+	var referenceNode = document.querySelector('.pswp__preloader');
 	
-	jQuery(".rl-gallery-item").hover(function(event){
-		var elem = event.target;
-		let comments_count = 0;
-		let star_count = 0;
+	var comments = document.createElement('button');
+	comments.setAttribute('class', 'pswp__button pswp__button--comments');
+	comments.title = "Comments";
+	referenceNode.before(comments);
+	comments.innerHTML += '<span><i id="photoComments" class="fa fa-comment-o"></i></span>';
+
+	var likes = document.createElement('button');
+	likes.setAttribute('class', 'pswp__button pswp__button--like');
+	likes.title = "Like";
+	referenceNode.before(likes);
+	likes.innerHTML += '<span><i id="photoLikes" class="fa fa-heart-o"></i></span>';
+	
+	var i = 0;
+	document.querySelectorAll('.rl-gallery-link').forEach(function(a) {
+		var likeCount = ('likeCount-'+i);
+		var commentCount = ('commentCount-'+i);
+		i++;
+		var div = document.createElement('div');
+		div.setAttribute('class', 'content-overlay');
+		a.prepend(div);
+		var counts = document.createElement('div');
+		counts.setAttribute('class', 'content-details fadeIn-top');
+		counts.style.display = "inline-block";
+		counts.id = '';
+		a.append(counts);
+
+		GraphJS.getStar(a.href, response => {
+			//console.log("Star count...: " + a.href + ' Response : ' + response.count);
+			counts.innerHTML += '<span style="padding: 10px;"><i id='+likeCount+' class="fa fa-heart-o">&nbsp;'+response.count+'</i></span>';
+		});
+		GraphJS.getComments(a.href, response => {
+			//console.log("Comment count...: " + a.href + ' Response : ' + response.comments.length);
+			counts.innerHTML += '<span style="padding: 10px;"><i id='+commentCount+' class="fa fa-comment-o">&nbsp;'+response.comments.length+'</i></span>';
+		});
+	});
+	
+	var parent = document.getElementById('rl-gallery-1');
+	var imageList = parent.getElementsByTagName("img");
+	for(i = 0; i < imageList.length; i++) {
+		imageList[i].classList.add('content-image');
+		//index = i+1;
+		//imageList[i].classList.add('pid-'+index);
+	}
+
+	/*jQuery(".star").on('hover',function(){
+		console.log('Love clicked ...: ');
+		event.preventDefault();
+	});*/
+
+	/*jQuery(".rl-gallery-item").hover(function(event){
+		elem = event.target;
+		comments_count = 0;
+		star_count = 0;
+		
+
+		
 		GraphJS.getStar(elem.href, response => {
 		  star_count = response.count;
-		});
-		GraphJS.getComments(elem.href, response => {
+		  console.log("Star count...: " + elem.href + ' Response : ' + star_count);
+		  
+		  GraphJS.getComments(elem.href, response => {
 		  comments_count = response.comments.length;
-		});
+		  console.log("Comment count...: " + elem.href + ' Response : ' + comments_count);
+
+		
+
+
+		
 		
 		console.log("Mouse is OVER...: " + elem);
 		div = document.createElement('div');
 		div.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
+		div.id = "added";
 		div.style.height = "100%";
 		div.style.zIndex = "9";
 		div.style.position = "absolute";
@@ -95,13 +157,16 @@ jQuery(document).ready(function() {
 		
 		window.setTimeout(()=>{
 			div.innerHTML += '<div style="position: absolute; width: 100%; bottom: 50%; color: white; font-weight: 300; font-size: 18px;"><span id="star" style="z-index: 9; cursor: pointer;"><i class="fa fa-heart"></i>&nbsp;&nbsp;'+star_count+'</span>&nbsp;&nbsp;&nbsp;&nbsp;<span id="comment" style="z-index: 9; cursor: pointer;"><i class="fa fa-comment"></i>&nbsp;&nbsp;'+comments_count+'</span></div>';
-			this.prepend(div);
+			this.appendChild(div);
 
 			var commentIcon = document.getElementById("comment");
 			commentIcon.addEventListener("click", comments);
 			var starIcon = document.getElementById("star");
 			starIcon.addEventListener("click", stars);
 		}, 500);
+		
+			});
+		});
 		
 		function comments() {
 			GraphJS.addComment(
@@ -135,12 +200,18 @@ jQuery(document).ready(function() {
 				}
 			)
 		}
+
 		
 	}, function(event){
-		var elem = event.target;
-		console.log("Mouse is OUT...: ");
-		this.removeChild(div);
-	});
+				window.setTimeout(()=>{
+		document.getElementById("added").outerHTML = "";
+			//var elem = event.target;
+			console.log("Mouse is OUT...: ");
+			//this.removeChild(div);
+			//remove(added);
+				}, 500);
+
+	}); */
 	
 	var eventDataString = "";
 	var graphStatus = document.getElementById("graphStatus");
